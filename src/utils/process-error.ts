@@ -1,13 +1,21 @@
 import { Response } from 'express';
 
+import { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } from '../constants/status-codes';
+
 export default async function processError (res: Response, err: Error) {
-  let status = 500;
-  let { message } = err;
-  if (err.name === 'ValidationError') status = 400;
-  if (err.name === 'CastError') {
-    status = 400;
-    message = 'Cast Error: Передан неверный _id';
+  let status = STATUS_SERVER_ERROR;
+  let message = 'Ошибка сервера';
+  if (err.name === 'ValidationError') {
+    status = STATUS_BAD_REQUEST;
+    message = err.message.split(': ').pop()!;
   }
-  if (err.message.startsWith('Not found')) status = 404;
+  if (err.name === 'CastError') {
+    status = STATUS_BAD_REQUEST;
+    message = 'Передан неверный _id';
+  }
+  if (err.message.startsWith('Not found')) {
+    status = STATUS_NOT_FOUND;
+    message = err.message.split(': ').pop()!;
+  }
   return res.status(status).send({ message });
 }

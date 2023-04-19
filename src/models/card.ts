@@ -32,5 +32,10 @@ const cardSchema = new Schema<Card>({
     default: Date.now(),
   },
 });
+/* cardSchema.post('save', { document: true }, function (doc) {
+  doc = doc.toObject();
+  delete doc.__v;
+  console.log(doc);
+}); */
 
 export default model('card', cardSchema);

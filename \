@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
 import express, { Request, Response } from 'express';
-
 import users from './routes/users';
 import cards from './routes/cards';
-import processError from './utils/process-error';
+import { STATUS_NOT_FOUND } from './constants/status-codes';
 
 const app = express();
 const PORT = 3000;
@@ -19,7 +18,7 @@ app.use((req, _, next) => {
 app.use('/users', users);
 app.use('/cards', cards);
 app.use((_: Request, res: Response) => {
-  processError(res, new Error('Not found: Запрошенного эндпойнта не существует.'));
+  res.status(STATUS_NOT_FOUND).send({ message: 'Запрошенного эндпойнта не существует' });
 });
 
 app.listen(PORT);
