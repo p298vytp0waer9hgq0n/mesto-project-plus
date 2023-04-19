@@ -1,7 +1,7 @@
 {
   "name": "sprint14",
   "version": "1.0.0",
-  "description": "",
+  "description": "Бэкенд для учебного проекта",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
     "dev": "tsnd --respawn --exit-child src/app.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Saveliy Zaznobin",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.17",
