@@ -5,7 +5,7 @@ import { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } from '../co
 export default async function processError (res: Response, err: Error) {
   let status = STATUS_SERVER_ERROR;
   let message = 'Ошибка сервера';
-  if (err.name === 'ValidationError') {
+  if (err.message.startsWith('ValidationError') || err.message.startsWith('user validation error')) {
     status = STATUS_BAD_REQUEST;
     message = err.message.split(': ').pop()!;
   }
@@ -21,5 +21,6 @@ export default async function processError (res: Response, err: Error) {
     status = STATUS_BAD_REQUEST;
     message = 'Пользователь с таким мылом уже зарегестрирован.';
   }
+  console.log(err);
   return res.status(status).send({ message });
 }

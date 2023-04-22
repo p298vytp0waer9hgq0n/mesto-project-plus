@@ -4,7 +4,7 @@ import validator from 'validator';
 type User = {
   name: String,
   email: string,
-  // password: String,
+  password: string,
   about: String,
   avatar: String,
 }
@@ -14,7 +14,7 @@ const userSchema = new Schema<User>({
     type: String,
     minLength: [2, 'Имя пользователя должно быть не короче 2 символов.'],
     maxLength: [30, 'Имя пользователя должно быть не длиннее 30 символов.'],
-    require: [true, 'Имя пользователя обязательно для заполнения.'],
+    required: [true, 'Имя пользователя обязательно для заполнения.'],
   },
   email: {
     type: String,
@@ -23,18 +23,25 @@ const userSchema = new Schema<User>({
       message: 'Невалидное мыло',
     },
     unique: true,
-    require: [true, 'Мыло обязательно для заполнения.'],
+    required: [true, 'Мыло обязательно для заполнения.'],
   },
-  // password: {},
+  password: {
+    type: String,
+    validate: {
+      validator: (v: string) => v.length > 0,
+      message: 'Пароль обязателен для заполнения',
+    },
+    required: [true, 'Пароль обязателен для заполнения.'],
+  },
   about: {
     type: String,
     minLength: [2, 'Информация о пользователе должна быть не короче 2 символов.'],
     maxLength: [200, 'Информация о пользователе должна быть не длиннее 300 символов.'],
-    require: [true, 'Информация о пользователе обязательна для заполнения'],
+    required: [true, 'Информация о пользователе обязательна для заполнения'],
   },
   avatar: {
     type: String,
-    require: [true, 'Ссылка на аватар обязательна для заполнения'],
+    required: [true, 'Ссылка на аватар обязательна для заполнения'],
   },
 });
 

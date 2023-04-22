@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
 
 import User from '../models/user';
 import processError from '../utils/process-error';
@@ -21,8 +22,22 @@ export const getUser = (req: Request, res: Response) => {
 };
 
 export const createUser = (req: Request, res: Response) => {
-  const newUser = req.body;
-  return User.create(newUser)
+  const {
+    name,
+    email,
+    password,
+    about,
+    avatar,
+  } = req.body;
+  // if (!password) throw new Error('ValidationError: Пароль обязателен для заполнения');
+  const hash = password ? bcrypt.hashSync(password, 10) : '';
+  return User.create({
+    name,
+    password: hash,
+    email,
+    about,
+    avatar,
+  })
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((err) => processError(res, err));
 };
