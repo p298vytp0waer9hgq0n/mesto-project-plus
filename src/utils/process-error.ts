@@ -17,5 +17,9 @@ export default async function processError (res: Response, err: Error) {
     status = STATUS_NOT_FOUND;
     message = err.message.split(': ').pop()!;
   }
+  if (err.message.includes('duplicate key error')) {
+    status = STATUS_BAD_REQUEST;
+    message = 'Пользователь с таким мылом уже зарегестрирован.';
+  }
   return res.status(status).send({ message });
 }
