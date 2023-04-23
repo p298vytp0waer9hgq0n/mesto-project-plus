@@ -1,8 +1,8 @@
 import { ObjectId, Schema, model } from 'mongoose';
 
 type Card = {
-  name: String;
-  link: String;
+  name: string;
+  link: string;
   owner: ObjectId;
   likes: Array<ObjectId>;
   createdAt: Date;

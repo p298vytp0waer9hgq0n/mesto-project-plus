@@ -2,11 +2,11 @@ import { Schema, model } from 'mongoose';
 import validator from 'validator';
 
 type User = {
-  name: String,
+  name: string,
   email: string,
   password: string,
-  about: String,
-  avatar: String,
+  about: string,
+  avatar: string,
 }
 
 const userSchema = new Schema<User>({
@@ -19,7 +19,7 @@ const userSchema = new Schema<User>({
   email: {
     type: String,
     validate: {
-      validator: (v: string) => validator.isEmail(v),
+      validator: (value: string) => validator.isEmail(value),
       message: 'Невалидное мыло',
     },
     unique: true,
@@ -28,7 +28,7 @@ const userSchema = new Schema<User>({
   password: {
     type: String,
     validate: {
-      validator: (v: string) => v.length > 0,
+      validator: (value: string) => value.length > 0,
       message: 'Пароль обязателен для заполнения',
     },
     required: [true, 'Пароль обязателен для заполнения.'],

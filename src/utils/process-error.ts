@@ -21,6 +21,5 @@ export default async function processError (res: Response, err: Error) {
     status = STATUS_BAD_REQUEST;
     message = 'Пользователь с таким мылом уже зарегестрирован.';
   }
-  console.log(err);
   return res.status(status).send({ message });
 }
