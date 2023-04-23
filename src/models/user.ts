@@ -14,7 +14,7 @@ const userSchema = new Schema<User>({
     type: String,
     minLength: [2, 'Имя пользователя должно быть не короче 2 символов.'],
     maxLength: [30, 'Имя пользователя должно быть не длиннее 30 символов.'],
-    required: [true, 'Имя пользователя обязательно для заполнения.'],
+    default: 'Жак Ив Кусто',
   },
   email: {
     type: String,
@@ -32,16 +32,17 @@ const userSchema = new Schema<User>({
       message: 'Пароль обязателен для заполнения',
     },
     required: [true, 'Пароль обязателен для заполнения.'],
+    select: false,
   },
   about: {
     type: String,
     minLength: [2, 'Информация о пользователе должна быть не короче 2 символов.'],
     maxLength: [200, 'Информация о пользователе должна быть не длиннее 300 символов.'],
-    required: [true, 'Информация о пользователе обязательна для заполнения'],
+    default: 'Исследователь океана',
   },
   avatar: {
     type: String,
-    required: [true, 'Ссылка на аватар обязательна для заполнения'],
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
 });
 

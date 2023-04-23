@@ -1,21 +1,30 @@
 import mongoose from 'mongoose';
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 
+import auth from './middleware/auth';
 import users from './routes/users';
 import cards from './routes/cards';
 import processError from './utils/process-error';
+import { createUser, login } from './controllers/users';
 
 const app = express();
 const PORT = 3000;
 
+// Process all jsons
 app.use(express.json());
-app.use((req, _, next) => {
-  req.body.user = {
-    _id: '643f025ca1cb88264e7e23a4',
-  };
-  next();
-});
 
+// Populate req.cookies
+app.use(cookieParser());
+
+// Unprotected routes
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+// Check the token and populate req.user or throw
+app.use(auth);
+
+// Protected routes
 app.use('/users', users);
 app.use('/cards', cards);
 app.use((_: Request, res: Response) => {
