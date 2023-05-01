@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cookieParser from 'cookie-parser';
 
 import auth from './middleware/auth';
@@ -7,6 +7,7 @@ import users from './routes/users';
 import cards from './routes/cards';
 import processError from './utils/process-error';
 import { createUser, login } from './controllers/users';
+import { notFoundPrefix } from './constants/errors';
 
 const app = express();
 const PORT = 3000;
@@ -27,9 +28,10 @@ app.use(auth);
 // Protected routes
 app.use('/users', users);
 app.use('/cards', cards);
-app.use((_: Request, res: Response) => {
-  processError(res, new Error('Not found: Запрошенного эндпойнта не существует.'));
+app.use((_, __, next) => {
+  next(new Error(`${notFoundPrefix}Запрошенного эндпойнта не существует.`));
 });
+app.use(processError);
 
 app.listen(PORT);
 

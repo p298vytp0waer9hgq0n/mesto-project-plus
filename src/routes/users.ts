@@ -1,4 +1,4 @@
-import express from 'express';
+import { default as express } from 'express';
 import {
   getSelf,
   getUser,
