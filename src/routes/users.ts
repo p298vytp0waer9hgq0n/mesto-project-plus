@@ -1,4 +1,5 @@
-import { default as express } from 'express';
+import express from 'express';
+import { celebrate } from 'celebrate';
 import {
   getSelf,
   getUser,
@@ -6,12 +7,13 @@ import {
   modifyAvatar,
   modifyUser,
 } from '../controllers/users';
+import { avatarSchema, userIdParamSchema, userPatchSchema } from '../constants/celebrate-schemas';
 
 const router = express.Router();
 router.get('/', getUsers);
 router.get('/me', getSelf);
-router.get('/:userId', getUser);
-router.patch('/me', modifyUser);
-router.patch('/me/avatar', modifyAvatar);
+router.get('/:userId', celebrate(userIdParamSchema), getUser);
+router.patch('/me', celebrate(userPatchSchema), modifyUser);
+router.patch('/me/avatar', celebrate(avatarSchema), modifyAvatar);
 
 export default router;

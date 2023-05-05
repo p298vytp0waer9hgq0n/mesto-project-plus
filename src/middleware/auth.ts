@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { authPrefix } from '../constants/errors';
+import AuthError from '../utils/auth-error';
 import { SECRET } from '../constants/secret';
 
 export default function auth (req: Request, _: Response, next: NextFunction) {
@@ -9,9 +9,8 @@ export default function auth (req: Request, _: Response, next: NextFunction) {
   let payload;
   try {
     payload = jwt.verify(token, SECRET) as { _id: string };
-  }
-  catch {
-    next(new Error(`${authPrefix}Ошибка авторизации.`));
+  } catch {
+    next(new AuthError('Ошибка авторизации.'));
   }
   req.user = payload;
   next();

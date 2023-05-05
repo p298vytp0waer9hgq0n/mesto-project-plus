@@ -1,17 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { mongo } from 'mongoose';
+import { isCelebrateError } from 'celebrate';
 
 import {
   STATUS_BAD_REQUEST,
   STATUS_CONFLICT,
-  STATUS_NOT_FOUND,
   STATUS_SERVER_ERROR,
 } from '../constants/status-codes';
-import { notFoundPrefix, authPrefix } from '../constants/errors';
+import processCelebrateError from './process-celebrate-error';
+import NotFoundError from './not-found-error';
+import AuthError from './auth-error';
 
 export default function processError (err: Error, _: Request, res: Response, __: NextFunction) {
+  console.log(err);
   let status = STATUS_SERVER_ERROR;
-  let message = 'Ошибка сервера';
+  let message = 'Ошибка серверa.';
+
+  if (isCelebrateError(err)) ({ status, message } = processCelebrateError(err));
+
   if (err instanceof mongoose.Error.ValidationError) {
     status = STATUS_BAD_REQUEST;
     message = err.message.split(': ').pop() || 'Ошибка валидации данных.';
@@ -24,13 +30,18 @@ export default function processError (err: Error, _: Request, res: Response, __:
     status = STATUS_CONFLICT;
     message = 'Пользователь с таким мылом уже зарегистрирован.';
   }
-  if (err.message.startsWith(notFoundPrefix)) {
-    status = STATUS_NOT_FOUND;
+  if (err instanceof SyntaxError && 'status' in err && err.status === 400 && err.message.includes('JSON')) {
+    status = STATUS_BAD_REQUEST;
+    message = 'Тело запроса содержит невалидный JSON.';
+  }
+  if (err instanceof NotFoundError) {
+    status = err.status;
     message = err.message.split(': ').pop() || 'Запрошенные данные не найдены.';
   }
-  if (err.message.startsWith(authPrefix)) {
-    status = STATUS_NOT_FOUND;
+  if (err instanceof AuthError) {
+    status = err.status;
     message = err.message.split(': ').pop() || 'Ошибка авторизации.';
+    return res.status(status).clearCookie('token').send({ message });
   }
   return res.status(status).send({ message });
 }
