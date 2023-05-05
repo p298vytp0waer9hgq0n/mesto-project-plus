@@ -6,7 +6,7 @@ import User from '../models/user';
 import NotFoundError from '../utils/not-found-error';
 import AuthError from '../utils/auth-error';
 import { STATUS_CREATED, STATUS_OK } from '../constants/status-codes';
-import { SECRET } from '../constants/secret';
+import SECRET from '../constants/secret';
 
 export const getUsers = (_: Request, res: Response, next: NextFunction) => {
   User.find({}, { __v: 0 })

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 import AuthError from '../utils/auth-error';
-import { SECRET } from '../constants/secret';
+import SECRET from '../constants/secret';
 
 export default function auth (req: Request, _: Response, next: NextFunction) {
   const { token } = req.cookies;

@@ -1,1 +1,1 @@
-export const SECRET = 'My naaaaaaame is Gyouby Masataka Oniwaaaaaaa!!!';
+export default 'My naaaaaaame is Gyouby Masataka Oniwaaaaaaa!!!';
