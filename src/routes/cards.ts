@@ -1,4 +1,5 @@
 import express from 'express';
+import { celebrate } from 'celebrate';
 
 import {
   createCard,
@@ -7,12 +8,13 @@ import {
   likeCard,
   removeLikeCard,
 } from '../controllers/cards';
+import { cardSchema, cardIdParamSchema } from '../constants/celebrate-schemas';
 
 const router = express.Router();
 router.get('/', getCards);
-router.post('/', createCard);
-router.delete('/:cardId', deleteCard);
-router.put('/:cardId/likes', likeCard);
-router.delete('/:cardId/likes', removeLikeCard);
+router.post('/', celebrate(cardSchema), createCard);
+router.delete('/:cardId', celebrate(cardIdParamSchema), deleteCard);
+router.put('/:cardId/likes', celebrate(cardIdParamSchema), likeCard);
+router.delete('/:cardId/likes', celebrate(cardIdParamSchema), removeLikeCard);
 
 export default router;

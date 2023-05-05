@@ -1,9 +1,8 @@
-import { ObjectId } from 'mongodb';
-import { Schema, model } from 'mongoose';
+import { ObjectId, Schema, model } from 'mongoose';
 
 type Card = {
-  name: String;
-  link: String;
+  name: string;
+  link: string;
   owner: ObjectId;
   likes: Array<ObjectId>;
   createdAt: Date;
@@ -21,21 +20,16 @@ const cardSchema = new Schema<Card>({
     required: [true, 'Ссылка на изображение обязательна для заполнения.'],
   },
   owner: {
-    type: ObjectId,
+    type: Schema.Types.ObjectId,
     required: [true, 'Идентификатор пользователя обязателен для заполнения.'],
   },
-  likes: {
-    type: [ObjectId],
-  },
+  likes: [{
+    type: Schema.Types.ObjectId, ref: 'user',
+  }],
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
-/* cardSchema.post('save', { document: true }, function (doc) {
-  doc = doc.toObject();
-  delete doc.__v;
-  console.log(doc);
-}); */
 
 export default model('card', cardSchema);

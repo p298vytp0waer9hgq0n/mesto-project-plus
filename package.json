@@ -14,8 +14,12 @@
   "author": "Saveliy Zaznobin",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.15.11",
+    "@types/validator": "^13.7.15",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.38.0",
@@ -26,8 +30,14 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
+    "celebrate": "^15.0.1",
+    "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
-    "mongodb": "^5.3.0",
-    "mongoose": "^7.0.4"
+    "express-winston": "^4.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.4",
+    "validator": "^13.9.0",
+    "winston": "^3.8.2"
   }
 }
