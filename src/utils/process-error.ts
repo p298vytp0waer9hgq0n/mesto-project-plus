@@ -9,6 +9,7 @@ import {
 } from '../constants/status-codes';
 import NotFoundError from './not-found-error';
 import AuthError from './auth-error';
+import ForbiddenError from './forbidden-error';
 
 // eslint-disable-next-line no-unused-vars
 export default function processError (err: Error, _r: Request, res: Response, _n: NextFunction) {
@@ -52,6 +53,12 @@ export default function processError (err: Error, _r: Request, res: Response, _n
     status = err.status;
     message = err.message.split(': ').pop() || 'Ошибка авторизации.';
     return res.status(status).clearCookie('token').send({ message });
+  }
+
+  if (err instanceof ForbiddenError) {
+    status = err.status;
+    message = err.message.split(': ').pop() || 'Доступ запрещён.';
+    return res.status(status).send({ message });
   }
 
   return res.status(status).send({ message });
