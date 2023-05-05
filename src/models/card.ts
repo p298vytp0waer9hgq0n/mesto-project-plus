@@ -23,9 +23,9 @@ const cardSchema = new Schema<Card>({
     type: Schema.Types.ObjectId,
     required: [true, 'Идентификатор пользователя обязателен для заполнения.'],
   },
-  likes: {
-    type: [Schema.Types.ObjectId],
-  },
+  likes: [{
+    type: Schema.Types.ObjectId, ref: 'user',
+  }],
   createdAt: {
     type: Date,
     default: Date.now(),

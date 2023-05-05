@@ -6,6 +6,7 @@ import { STATUS_CREATED, STATUS_OK } from '../constants/status-codes';
 
 export const getCards = (_: Request, res: Response, next: NextFunction) => {
   Card.find({}, { __v: 0 })
+    .populate('likes')
     .then((data) => res.status(STATUS_OK).send({ data }))
     .catch(next);
 };
