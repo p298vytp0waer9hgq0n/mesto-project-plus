@@ -3,11 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import User from '../models/user';
-import NotFoundError from '../utils/not-found-error';
 import AuthError from '../utils/auth-error';
 import { STATUS_CREATED, STATUS_OK } from '../constants/status-codes';
 import SECRET from '../constants/secret';
-import { messageUserNotFound, messageWrongCredentials } from '../constants/messages';
+import { messageWrongCredentials } from '../constants/messages';
+import { findModifyUser, findUserById } from '../helpers';
 
 export const getUsers = (_: Request, res: Response, next: NextFunction) => {
   User.find({}, { __v: 0 })
@@ -17,22 +17,12 @@ export const getUsers = (_: Request, res: Response, next: NextFunction) => {
 
 export const getUser = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.userId;
-  return User.findById(id, { __v: 0 })
-    .then((user) => {
-      if (!user) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  return findUserById(id, res).catch(next);
 };
 
 export const getSelf = (req: Request, res: Response, next: NextFunction) => {
   const id = req.user!._id;
-  return User.findById(id, { __v: 0 })
-    .then((user) => {
-      if (!user) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  return findUserById(id, res).catch(next);
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -45,11 +35,11 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
   } = req.body;
   const hash = password ? bcrypt.hashSync(password, 10) : '';
   return User.create({
-    name: name === '' ? undefined : name,
+    name,
     password: hash,
     email,
-    about: about === '' ? undefined : about,
-    avatar: avatar === '' ? undefined : avatar,
+    about,
+    avatar,
   })
     .then((user) => {
       const { password: _, ...output } = user.toObject();
@@ -62,23 +52,13 @@ export const modifyUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
   // req.user should definetely exist here, otherwise auth.ts middleware would have thrown
   const { user } = req;
-  return User.findByIdAndUpdate(user!._id, { name, about }, { new: true, select: '-__v', runValidators: true })
-    .then((data) => {
-      if (!data) throw new AuthError(messageUserNotFound);
-      return res.status(STATUS_OK).send(data);
-    })
-    .catch(next);
+  return findModifyUser(user!._id, { name, about }, res).catch(next);
 };
 
 export const modifyAvatar = (req: Request, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   const { user } = req;
-  return User.findByIdAndUpdate(user!._id, { avatar }, { new: true, select: '-__v' })
-    .then((updatedUser) => {
-      if (!updatedUser) throw new AuthError(messageUserNotFound);
-      return res.status(STATUS_OK).send({ id: updatedUser._id });
-    })
-    .catch(next);
+  return findModifyUser(user!._id, { avatar }, res).catch(next);
 };
 
 export const login = (req: Request, res: Response, next: NextFunction) => {

@@ -2,7 +2,7 @@
   "name": "sprint14",
   "version": "1.0.0",
   "description": "Бэкенд для учебного проекта",
-  "main": "index.ts",
+  "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint src/**/*.ts",

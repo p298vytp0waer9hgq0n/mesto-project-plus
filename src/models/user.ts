@@ -27,11 +27,7 @@ const userSchema = new Schema<User>({
   },
   password: {
     type: String,
-    validate: {
-      validator: (value: string) => value.length > 0,
-      message: 'Пароль обязателен для заполнения',
-    },
-    required: [true, 'Пароль обязателен для заполнения.'],
+    required: true,
     select: false,
   },
   about: {
@@ -42,6 +38,10 @@ const userSchema = new Schema<User>({
   },
   avatar: {
     type: String,
+    validate: {
+      validator: (value: string) => validator.isURL(value, { protocols: ['http', 'https'], require_tld: true, require_protocol: true }),
+      message: 'Невалидная ссылка на картинку.',
+    },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
 });
