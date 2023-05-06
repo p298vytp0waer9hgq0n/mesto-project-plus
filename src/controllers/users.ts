@@ -9,6 +9,30 @@ import { STATUS_CREATED, STATUS_OK } from '../constants/status-codes';
 import SECRET from '../constants/secret';
 import { messageUserNotFound, messageWrongCredentials } from '../constants/messages';
 
+function findUserById (id: string, res: Response) {
+  return User.findById(id, { __v: 0 })
+    .then((user) => {
+      if (!user) throw new NotFoundError(messageUserNotFound);
+      return res.status(STATUS_OK).send(user);
+    });
+}
+
+function findModifyUser (
+  id: string,
+  {
+    name = undefined,
+    about = undefined,
+    avatar = undefined,
+  },
+  res: Response,
+) {
+  return User.findByIdAndUpdate(id, { name, about, avatar }, { new: true, select: '-__v', runValidators: true })
+    .then((data) => {
+      if (!data) throw new NotFoundError(messageUserNotFound);
+      return res.status(STATUS_OK).send(data);
+    });
+}
+
 export const getUsers = (_: Request, res: Response, next: NextFunction) => {
   User.find({}, { __v: 0 })
     .then((data) => res.status(STATUS_OK).send({ data }))
@@ -17,22 +41,12 @@ export const getUsers = (_: Request, res: Response, next: NextFunction) => {
 
 export const getUser = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.userId;
-  return User.findById(id, { __v: 0 })
-    .then((user) => {
-      if (!user) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  return findUserById(id, res).catch(next);
 };
 
 export const getSelf = (req: Request, res: Response, next: NextFunction) => {
   const id = req.user!._id;
-  return User.findById(id, { __v: 0 })
-    .then((user) => {
-      if (!user) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  return findUserById(id, res).catch(next);
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -62,23 +76,13 @@ export const modifyUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
   // req.user should definetely exist here, otherwise auth.ts middleware would have thrown
   const { user } = req;
-  return User.findByIdAndUpdate(user!._id, { name, about }, { new: true, select: '-__v', runValidators: true })
-    .then((data) => {
-      if (!data) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(data);
-    })
-    .catch(next);
+  return findModifyUser(user!._id, { name, about }, res).catch(next);
 };
 
 export const modifyAvatar = (req: Request, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   const { user } = req;
-  return User.findByIdAndUpdate(user!._id, { avatar }, { new: true, select: '-__v', runValidators: true })
-    .then((updatedUser) => {
-      if (!updatedUser) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send({ id: updatedUser._id });
-    })
-    .catch(next);
+  return findModifyUser(user!._id, { avatar }, res).catch(next);
 };
 
 export const login = (req: Request, res: Response, next: NextFunction) => {
