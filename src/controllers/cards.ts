@@ -8,6 +8,7 @@ import { messageCardNotAllowed, messageCardNotFound } from '../constants/message
 
 export const getCards = (_: Request, res: Response, next: NextFunction) => {
   Card.find({}, { __v: 0 })
+    .populate('owner')
     .populate('likes')
     .then((data) => res.status(STATUS_OK).send({ data }))
     .catch(next);
