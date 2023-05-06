@@ -17,7 +17,11 @@ export const getCards = (_: Request, res: Response, next: NextFunction) => {
 export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.cardId;
   const userId = req.user!._id;
-  return Card.findOneAndDelete({ _id: id, owner: userId }, { __v: 0 })
+  return Card.findOne({ _id: id })
+    .then((card) => {
+      if (!card) throw new NotFoundError(messageCardNotFound);
+    })
+    .then(() => Card.findOneAndDelete({ _id: id, owner: userId }, { __v: 0 }))
     .then((card) => {
       if (!card) throw new ForbiddenError(messageCardNotAllowed);
       return res.status(STATUS_OK).send({ id: card._id });

@@ -1,4 +1,5 @@
 import { ObjectId, Schema, model } from 'mongoose';
+import validator from 'validator';
 
 type Card = {
   name: string;
@@ -17,6 +18,10 @@ const cardSchema = new Schema<Card>({
   },
   link: {
     type: String,
+    validate: {
+      validator: (value: string) => validator.isURL(value, { protocols: ['http', 'https'], require_tld: true, require_protocol: true }),
+      message: 'Невалидная ссылка на картинку.',
+    },
     required: [true, 'Ссылка на изображение обязательна для заполнения.'],
   },
   owner: {
@@ -24,12 +29,14 @@ const cardSchema = new Schema<Card>({
     ref: 'user',
     required: [true, 'Идентификатор пользователя обязателен для заполнения.'],
   },
-  likes: [{
-    type: Schema.Types.ObjectId, ref: 'user',
-  }],
+  likes: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+    ref: 'user',
+  },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

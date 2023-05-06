@@ -34,7 +34,7 @@ export default function processError (err: Error, _r: Request, res: Response, _n
     message = 'Передан неверный _id';
   }
 
-  if (err instanceof mongo.MongoServerError && err.code === 11000 && err.keyPattern?.email === 1) {
+  if (err instanceof mongo.MongoServerError && err.code === 11000) {
     status = STATUS_CONFLICT;
     message = 'Пользователь с таким мылом уже зарегистрирован.';
   }

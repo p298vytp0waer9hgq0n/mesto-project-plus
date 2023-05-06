@@ -45,11 +45,11 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
   } = req.body;
   const hash = password ? bcrypt.hashSync(password, 10) : '';
   return User.create({
-    name: name === '' ? undefined : name,
+    name,
     password: hash,
     email,
-    about: about === '' ? undefined : about,
-    avatar: avatar === '' ? undefined : avatar,
+    about,
+    avatar,
   })
     .then((user) => {
       const { password: _, ...output } = user.toObject();
@@ -64,7 +64,7 @@ export const modifyUser = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req;
   return User.findByIdAndUpdate(user!._id, { name, about }, { new: true, select: '-__v', runValidators: true })
     .then((data) => {
-      if (!data) throw new AuthError(messageUserNotFound);
+      if (!data) throw new NotFoundError(messageUserNotFound);
       return res.status(STATUS_OK).send(data);
     })
     .catch(next);
@@ -73,9 +73,9 @@ export const modifyUser = (req: Request, res: Response, next: NextFunction) => {
 export const modifyAvatar = (req: Request, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   const { user } = req;
-  return User.findByIdAndUpdate(user!._id, { avatar }, { new: true, select: '-__v' })
+  return User.findByIdAndUpdate(user!._id, { avatar }, { new: true, select: '-__v', runValidators: true })
     .then((updatedUser) => {
-      if (!updatedUser) throw new AuthError(messageUserNotFound);
+      if (!updatedUser) throw new NotFoundError(messageUserNotFound);
       return res.status(STATUS_OK).send({ id: updatedUser._id });
     })
     .catch(next);
