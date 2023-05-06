@@ -3,35 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import User from '../models/user';
-import NotFoundError from '../utils/not-found-error';
 import AuthError from '../utils/auth-error';
 import { STATUS_CREATED, STATUS_OK } from '../constants/status-codes';
 import SECRET from '../constants/secret';
-import { messageUserNotFound, messageWrongCredentials } from '../constants/messages';
-
-function findUserById (id: string, res: Response) {
-  return User.findById(id, { __v: 0 })
-    .then((user) => {
-      if (!user) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(user);
-    });
-}
-
-function findModifyUser (
-  id: string,
-  {
-    name = undefined,
-    about = undefined,
-    avatar = undefined,
-  },
-  res: Response,
-) {
-  return User.findByIdAndUpdate(id, { name, about, avatar }, { new: true, select: '-__v', runValidators: true })
-    .then((data) => {
-      if (!data) throw new NotFoundError(messageUserNotFound);
-      return res.status(STATUS_OK).send(data);
-    });
-}
+import { messageWrongCredentials } from '../constants/messages';
+import { findModifyUser, findUserById } from '../helpers';
 
 export const getUsers = (_: Request, res: Response, next: NextFunction) => {
   User.find({}, { __v: 0 })
